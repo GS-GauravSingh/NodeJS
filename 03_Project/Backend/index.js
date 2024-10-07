@@ -1,13 +1,59 @@
 // Import Statements - Importing using Common JS syntax (require())
 const express = require('express');
 const fs = require('fs')
+const mongoose = require('mongoose');
 
-// Temporary User Data
-let users = require("./MOCK_DATA.json");
 
 // For loading Environment Variables - no need to hold this in a variable.
 // {path:'../.env'} -> path to my .env file, in case when .env file in not present in the root director. If .env file is present in the root directory then it gets automatically loaded.
 require('dotenv').config({ path: '../.env' });
+
+// -------------- Database Code Starts Here -----------------------------
+
+// Creating a User Schema
+const userSchema = new mongoose.Schema({
+    first_name: {
+        type: String,
+        required: true
+    },
+
+    last_name: {
+        type: String
+    },
+
+
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+
+    gender: {
+        type: String,
+        required: true
+    },
+
+    job_title: {
+        type: String,
+    },
+},
+    {
+        timestamps: true
+    });
+
+// Creating a model.
+const User = mongoose.model('User', userSchema);
+
+// MongoDb Connection
+mongoose.connect('mongodb://127.0.0.1:27017/users')
+    .then((res) => {
+        console.log(`MongoDB Connected`)
+    })
+    .catch((err) => {
+        console.log(`MongoDb connection error`)
+    })
+
+// -------------- Database Code Ends Here -------------------------------
 
 // Initializing `app`.
 const app = express();
@@ -27,15 +73,16 @@ app.get("/", (req, res) => {
 });
 
 // GET Routes - to retrieve user(s) data.
-app.get("/api/users", (req, res) => {
-    return res.json(users);
+app.get("/api/users", async (req, res) => {
+
+    const allDbUsers = await User.find({});
+    return res.json(allDbUsers);
 });
 
 // Dynamic Path Parameter - to retrieve data of individual user by their id.
-app.get("/api/users/:id", (req, res) => {
+app.get("/api/users/:id", async (req, res) => {
 
-    const id = Number(req.params.id);
-    const userData = users.find((user) => user.id === id);
+    const userData = await User.findById(req.params.id);
     if (!userData) {
         // Status Code (404): meaning requested resource not found.
         return res.status(404).send(`User Not Found.`);
@@ -45,7 +92,7 @@ app.get("/api/users/:id", (req, res) => {
 });
 
 // POST Route
-app.post("/api/users", (req, res) => {
+app.post("/api/users", async (req, res) => {
 
     const userData = req.body;
 
@@ -62,96 +109,84 @@ app.post("/api/users", (req, res) => {
         });
     }
 
-    users.push({ id: users.length + 1, ...userData })
-    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err) => {
-        if (err) {
-            return res.status(500).json({
-                msg: "Internal Server Error",
-                error: err
-            });
-        }
+    const newUser = new User({
+        first_name: userData.first_name,
+        last_name: userData.last_name,
+        email: userData.email,
+        gender: userData.gender,
+        job_title: userData.job_title
+    });
 
-        res.status(201).json({
-            msg: "Operation Successfull"
-        });
+    const result = await User.create(newUser);
+    return res.status(201).json({
+        msg: "Operation Successfull",
+        user: result
     });
 });
 
 // PATCH Route
-app.patch("/api/users/:id", (req, res) => {
+app.patch("/api/users/:id", async (req, res) => {
 
-    const id = Number(req.params.id);
-    const newData = req.body;
-    if (!newData) {
+    if (!req.body) {
         return res.status(400).json({
             msg: "Bad Request: No data provided for update."
         });
     }
 
-    let isUserFound = false;
-    let userData = {};
-    let newUsers = users.map((user) => {
-        if (user.id === id) {
-            isUserFound = true;
-            userData = {...user, ...newData};
-            return userData;
+    try {
+        const updatedUserDetails = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+        // Check if the user was found and updated
+        if (updatedUserDetails) {
+            return res.json(
+                {
+                    msg: "Details Updated Successfully",
+                    user: updatedUserDetails
+                }
+            );
         }
-        return user;
-    });
-
-    // If user with id not found.
-    if (!isUserFound) {
-        // Status Code (404): meaning requested resource not found.
-        return res.status(404).send(`User Not Found.`);
-    }
-
-    users = newUsers;
-    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err) => {
-        if (err) {
-            return res.status(500).json({
-                msg: "Internal Server Error",
-                error: err
-            });
+        else {
+            res.status(404).json(
+                {
+                    msg: "Not Found: User Not Found."
+                }
+            );
         }
-
-        return res.json({
-            msg: "User updated successfully",
-            user: userData, // Return the updated user data
+    } catch (error) {
+        console.error(`PATCH ERROR: An error occurred while updating user details: ${error}`);
+        return res.status(500).json({
+            msg: "Internal Server Error",
+            error: error.message // Include error message for clarity
         });
-    });
+    }
 });
 
 // DELETE Route
-app.delete("/api/users/:id", (req, res) => {
+app.delete("/api/users/:id", async (req, res) => {
 
-    const id = Number(req.params.id);
-    let isUserFound = false;
-    let newUsers = users.filter((user) => {
-        if (user.id === id) {
-            isUserFound = true;
-            return false;
+    try {
+        const deletedUser = await User.findByIdAndDelete(req.params.id);
+
+        // Check if a user was found and deleted
+        if (deletedUser) {
+            return res.status(200).json({
+                msg: "User deleted successfully.",
+                user: deletedUser // Optionally return the deleted user data
+            });
         }
-        return true;
-    });
-
-    // If user with id not found.
-    if (!isUserFound) {
-        return res.status(400).send(`Not Found, No user present with ID:${id}.`);
-    }
-
-    users = newUsers;
-    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err) => {
-        if (err) {
-            return res.status(500).json({
-                msg: "Internal Server Error",
-                error: err
+        else {
+            return res.status(404).json({
+                msg: "Not Found: User Not Found."
             });
         }
 
-        return res.json({
-            msg: "User deleted successfully",
+    } catch (error) {
+        console.error(`DELETE ERROR: An error occurred while deleting a user: ${error}`);
+        return res.status(500).json({
+            msg: "Internal Server Error",
+            error: error.message // Include error message for clarity
         });
-    });
+    }
 });
 
 // Listen for the incomming http request
