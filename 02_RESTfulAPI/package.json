@@ -1,0 +1,15 @@
+{
+  "name": "restfulapi",
+  "version": "1.0.0",
+  "description": "Creating RESTful or REST API's",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Gaurav Singh",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "webserver",
+  "version": "1.0.0",
+  "description": "Creating a webser in Node.js using 'http' module.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Gaurav Singh",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0",
+    "url": "^0.11.4"
+  }
+}
