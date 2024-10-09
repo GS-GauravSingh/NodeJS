@@ -4,6 +4,8 @@ import dotenv from 'dotenv'
 import urlRouter from './routes/urlRoutes.js'
 import connectMongoDB from './database/databaseConnection.js'
 import URL from './models/urlModel.js'
+import path from 'path'
+import staticRouter from './routes/staticRouter.js'
 
 // For loading Environment Variables - no need to hold this in a variable.
 dotenv.config({ path: './.env' });
@@ -11,8 +13,17 @@ dotenv.config({ path: './.env' });
 // Initializing `app`.
 const app = express();
 
-// Middleware - For parsing JSON Data - client can sent URL in JSON format.
+// Telling Express that I am going to use `EJS` Templating Engine for Server-Side Rendering.
+app.set('view engine', 'ejs');
+
+// Telling Express that all my `.ejs` files are present in `views` folder.
+// path.resolve('./views'): This generates an absolute path to the views folder. Using path.resolve helps ensure that your application can correctly find the folder regardless of where it is run from.
+// path is a built-in module in node.js.
+app.set('views', path.resolve('./views'))
+
+// Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 
 // PORT and HOSTNAME
@@ -30,16 +41,28 @@ connectMongoDB(mongoDbUrl)
     })
 
 // Routes
-app.get('/', (req, res) => {
-    return res.send("Hello from Server, You are at the Homepage.");
-});
+// app.get('/', async (req, res) => {
+//     // return res.send("Hello from Server, You are at the Homepage.");
+
+//     // Let's render Home Page.
+//     // res.render("homePage"): This method tells Express to render the template named homePage.ejs
+//     // return res.render("homePage"); // Render the 'homePage.ejs' template
+
+//     // You can pass dynamic data or variables to your EJS template file when rendering it. 
+//     return res.render("homePage", {
+//         urls: await URL.find({}), // fetching all documents from MongoDB.
+//     });
+// });
+
+// Whenever there is a request start with `/`, that request will be handled by `urlRouter`.
+app.use("/", staticRouter);
 
 // Handling Redirection.
 app.get('/:shortID', async (req, res) => {
 
     const shortID = req.params.shortID;
     const date = new Date().toLocaleString('en-IN');
-    
+
 
     try {
 
@@ -56,7 +79,7 @@ app.get('/:shortID', async (req, res) => {
                 },
             }
         );
-        
+
         return res.redirect(results.redirectURL);
 
     } catch (error) {

@@ -23,9 +23,12 @@ async function handleGenerateNewShortURL(req, res) {
         });
 
         // If creation is successful, send a success response
-        return res.json({
-            msg: "Operation Successful",
-            id: shortID,
+        // return res.json({
+        //     msg: "Operation Successful",
+        //     id: shortID,
+        // });
+        return res.render("outputPage", {
+            id: shortID
         });
 
     } catch (error) {

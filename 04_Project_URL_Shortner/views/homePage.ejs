@@ -1,0 +1,169 @@
+<!-- .ejs files are normal HTML files, but its an `ejs` file so can embedded javascript code into it. -->
+
+<!-- ### Key Points:
+- <%= %>: Used to insert dynamic data/variables into the HTML.
+- <% %>: Used to write JavaScript logic (like loops or conditionals). -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+
+    <!-- CSS Styles -->
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #121314;
+            color: antiquewhite;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .border {
+            border: 1px solid white;
+        }
+
+        .sub_heading {
+            margin-top: 2rem;
+        }
+
+        .container {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .url_input_form {
+            min-width: min(80vw, 500px);
+            display: flex;
+        }
+
+        .url_input_form input {
+            flex-grow: 1;
+            background-color: transparent;
+            border: none;
+            margin: none;
+            outline: none;
+            padding: 1rem;
+            border-top: 1px solid antiquewhite;
+            border-left: 1px solid antiquewhite;
+            border-bottom: 1px solid antiquewhite;
+            border-top-left-radius: 1rem;
+            border-bottom-left-radius: 1rem;
+
+            color: antiquewhite;
+            font-size: 1rem;
+        }
+
+        .url_input_form button {
+
+            background-color: transparent;
+            border: none;
+            margin: none;
+            border: 1px solid antiquewhite;
+            border-top-right-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+            color: antiquewhite;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .url_input_form button span {
+            padding: 0.8rem;
+        }
+
+        .url_input_form button span:hover {
+            opacity: 0.6;
+        }
+
+        .output_container {
+            margin-top: 1rem;
+        }
+
+
+        .urls_table thead{
+            background-color: antiquewhite;
+            color: black;
+            padding: 0.5rem;
+        }
+
+        .urls_table th, .urls_table td{
+            padding: 0.5rem;
+        }
+
+        .urls_table tbody tr:nth-child(even){
+            background-color: #343a40; /* Light gray for even rows */
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <h1 class="heading">URL Shortner</h1>
+    <p class="tagline">Shorten Your Links, Share with Ease!</p>
+
+    <h2 class="sub_heading">Paste Here to Create a Short Link!</h2>
+
+    <div class="container">
+        <form method="post" action="http://127.0.0.1:8000/url" class="url_input_form">
+            <input type="text" name="url" id="inputURL" placeholder="Enter the link here">
+            <button type="submit"><span>Shorten URL</span></button>
+        </form>
+
+        <!-- Displaying shorten URL when generated. -->
+        <!-- In EJS (Embedded JavaScript), locals is an object that contains local variables available to the template. The locals object is automatically created by Express and contains all the data passed to the template when rendering. This allows you to access those variables directly in your EJS code.-->
+        <!-- You can use `id` also. This `locals.id` is just for more informaton. -->
+        <% if(locals.id){ %>
+            <p class="output_container">Your shortened URL: http://localhost:8000/<%= id %>
+            </p>
+        <% } %>
+    </div>
+
+    <% if(locals.urls && locals.urls.length > 0){ %>
+        <div class="container table_container">
+            <table class="urls_table">
+
+                <!-- Table Header -->
+                <thead>
+                    <th>Serial No.</th>
+                    <th>URL</th>
+                    <th>Shorten URL</th>
+                    <th>Total Clicks</th>
+                </thead>
+                
+                <!-- Table Body -->
+                <tbody>
+    
+                    <% urls.forEach((url, idx) => { %>
+    
+                        <!-- Table Row -->
+                        <tr>
+                            <!-- Table Cells Data -->
+                            <td><%= idx + 1 %></td>
+                            <td><%= url.redirectURL %></td>
+                            <td>http://localhost:8000/<%= url.shortID %></td>
+                            <td><%= url.visitHistory.length %></td>
+                        </tr>
+                    <% }) %>
+    
+                </tbody>
+            </table>
+        </div>
+    <% } %>
+
+
+</body>
+
+</html>

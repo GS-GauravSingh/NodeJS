@@ -1,0 +1,65 @@
+<!-- .ejs files are normal HTML files, but its an `ejs` file so can embedded javascript code into it. -->
+
+<!-- ### Key Points:
+- <%= %>: Used to insert dynamic data/variables into the HTML.
+- <% %>: Used to write JavaScript logic (like loops or conditionals). -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+
+    <!-- CSS Styles -->
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #121314;
+            color: antiquewhite;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .sub_heading {
+            margin-top: 2rem;
+        }
+
+        .container {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 class="heading">URL Shortner</h1>
+    <p class="tagline">Shorten Your Links, Share with Ease!</p>
+    <div style="border-bottom: 1px solid antiquewhite; width: 100%; margin-top: 0.8rem;"></div>
+
+    <h2 class="sub_heading">URL Shortened</h2>
+
+    <div class="container">
+
+        <!-- Displaying shorten URL when generated. -->
+        <!-- In EJS (Embedded JavaScript), locals is an object that contains local variables available to the template. The locals object is automatically created by Express and contains all the data passed to the template when rendering. This allows you to access those variables directly in your EJS code.-->
+        <!-- You can use `id` also. This `locals.id` is just for more informaton. -->
+        <% if(locals.id){ %>
+            <p class="output_container">Your shortened URL: http://localhost:8000/<%= id %>
+            </p>
+        <% } %>
+    </div>
+</body>
+
+</html>
