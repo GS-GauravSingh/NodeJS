@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignUp Page</title>
+
+    <!-- CSS Styles -->
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #121314;
+            color: antiquewhite;
+            padding: 1rem;
+        }
+
+        .border {
+            border: 1px solid white;
+        }
+
+        .sub_heading {
+            margin-top: 2rem;
+        }
+
+        .container {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+
+        }
+
+        .signup-form {
+            display: grid;
+            place-content: center;
+            gap: 1rem;
+        }
+
+        .signup-form div {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .signup-form div input {
+            background-color: transparent;
+            border: none;
+            margin: none;
+            outline: none;
+            padding: 0.5rem;
+            border: 1px solid antiquewhite;
+            border-radius: 0.5rem;
+
+
+            color: antiquewhite;
+        }
+
+        .signup-form div button {
+
+            margin-top: 1rem;
+            background-color: transparent;
+            border: none;
+            margin: none;
+            border: 1px solid antiquewhite;
+            border-radius: 0.5rem;
+            color: antiquewhite;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .signup-form div button span {
+            padding: 0.8rem;
+        }
+
+        .signup-form div button span:hover {
+            opacity: 0.6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <form action="http://127.0.0.1:8000/user/signup" method="post" class="container signup-form">
+
+        <div class="">
+            <label for="userName">Name</label>
+            <input type="text" name="name" id="userName" required>
+        </div>
+
+        <div>
+            <label for="userEmail">Email</label>
+            <input type="email" name="email" id="userEmail" required>
+        </div>
+
+        <div>
+            <label for="userPassword">Password</label>
+            <input type="password" name="password" id="userPassword" required>
+        </div>
+
+        <div>
+            <button type="submit"><span>Sign-Up</span></button>
+        </div>
+
+    </form>
+
+
+</body>
+
+</html>

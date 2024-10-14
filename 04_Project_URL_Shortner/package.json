@@ -11,11 +11,13 @@
   "author": "Gaurav Singh",
   "license": "ISC",
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.21.0",
     "mongoose": "^8.7.0",
-    "nanoid": "^5.0.7"
+    "nanoid": "^5.0.7",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

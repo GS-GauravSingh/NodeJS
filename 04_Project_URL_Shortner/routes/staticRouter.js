@@ -12,6 +12,15 @@ router.get('/', async (req, res) => {
     });
 })
 
+// GET Route
+router.get('/signup', async (req, res) => {
+    return res.render('signUp');
+})
+
+router.get('/login', async (req, res) => {
+    return res.render('login');
+})
+
 
 // Export the router.
 export default router;

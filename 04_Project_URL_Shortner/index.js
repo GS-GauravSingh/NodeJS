@@ -6,6 +6,9 @@ import connectMongoDB from './database/databaseConnection.js'
 import URL from './models/urlModel.js'
 import path from 'path'
 import staticRouter from './routes/staticRouter.js'
+import userRouter from './routes/userRoutes.js'
+import cookieParser from 'cookie-parser' // use this package to parse cookies
+import { restrictToLoggedInUsersOnly } from './middlewares/auth.js'
 
 // For loading Environment Variables - no need to hold this in a variable.
 dotenv.config({ path: './.env' });
@@ -24,6 +27,7 @@ app.set('views', path.resolve('./views'))
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser()); // cookie parser middleware, used to parse cookies.
 
 
 // PORT and HOSTNAME
@@ -95,7 +99,16 @@ app.get('/:shortID', async (req, res) => {
 // Whenever there is a request start with `/url`, that request will be handled by `urlRouter`.
 // app.use() is also use to mount/attack a route handler (in this case urlRouter) to specific url.
 // This route will generate a short id.
-app.use('/url', urlRouter);
+
+// `restrictToLoggedInUsersOnly` is an inline middleware here, it means
+// Whenever there is a request start with `/user`, that request will be handled by `userRouter`.
+/*
+When a request is made to a route that starts with `/url`, Express will first execute the `restrictToLoggedInUsersOnly` middleware.
+1. If restrictToLoggedInUsersOnly allows the request to continue (e.g., if the user is authenticated), the request will then be passed to urlRouter.
+2. If restrictToLoggedInUsersOnly blocks the request (e.g., if the user is not authenticated), the request will not reach urlRouter, and an error response will be sent.
+*/
+app.use('/url', restrictToLoggedInUsersOnly, urlRouter);
+app.use("/user", userRouter);
 
 
 
