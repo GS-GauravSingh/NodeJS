@@ -39,10 +39,8 @@ async function handleUserLogin(req, res) {
             });
         }
 
-        // Session Id for user.
-        const sessionId = uuidv4();
-        setUser(sessionId, user); // storing user details associated with session id.
-        res.cookie("uid", sessionId); // this is how we can send cookeies to client.
+        const token = setUser(user);
+        res.cookie("token", token); // this is how we can send cookies to client.
         return res.redirect("http://127.0.0.1:8000/");
         
 
