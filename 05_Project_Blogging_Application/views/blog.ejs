@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- Include the `Head.ejs` partial -->
+    <%- include("./partials/head.ejs") %>
+        <title>Blog</title>
+</head>
+
+<body>
+    <!-- Include the `nav.ejs` partial -->
+    <%- include("./partials/nav.ejs") %>
+
+        <div class="container mt-4">
+
+            <!-- Blog Title -->
+            <h1>
+                <%= blog.title %>
+            </h1>
+
+            <!-- Cover Image -->
+            <img src="<%= blog.coverImageURL %>" alt="..."
+                style="max-width: min(600px, 90vw); max-height: min(500px, 60vh); margin: 1rem 0;">
+
+            <!-- Blog Body -->
+            <p>
+                <%= blog.body %>
+            </p>
+        </div>
+
+        <div class="container">
+            <img src="<%= blog.createdBy.profileImageURL %>" alt="" style="width: 50px; margin-right: 0.5rem;">
+            <span>
+                <%= blog.createdBy.fullname %>
+            </span>
+        </div>
+
+        <div class="container mt-4">
+            <h2>Comments (<%= locals.comments.length %>)</h2>
+
+            <% if (locals.user) { %>
+                <form action="/blog/comment/<%= blog._id %>" method="post">
+                    <div class="mb-3">
+                        <input type="text" name="content" class="form-control" placeholder="Enter your comment...">
+
+                        <button type="submit" class="btn btn-sm btn-primary mt-2">Post comment</button>
+                    </div>
+                </form>
+                <% } %>
+        </div>
+
+        <div class="container mt-4 mb-4">
+
+            <% locals.comments.forEach((comment) => { %>
+                <img src="<%= comment.createdBy.profileImageURL %>" alt="" style="width: 50px; margin-right: 0.5rem;">
+                <span>
+                    <%= comment.createdBy.fullname %>
+                </span>
+                <p>
+                    <pre><%= comment.content %></pre>
+                </p>
+                <% }); %>
+        </div>
+
+        <!-- Include the `Scripts.ejs` partial -->
+        <%- include("./partials/scripts.ejs") %>
+</body>
+
+</html>

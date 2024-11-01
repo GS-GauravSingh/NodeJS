@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- Include the `Head.ejs` partial -->
+    <%- include("./partials/head.ejs") %>
+        <title>Homepage</title>
+</head>
+
+<body>
+    <!-- Include the `nav.ejs` partial -->
+    <%- include("./partials/nav.ejs") %>
+
+        <div class="container mt-4 d-flex flex-row flex-wrap justify-content-center gap-4">
+
+            <% locals.blogs.forEach((blog)=> { %>
+                <div class="card" style="width: 18rem;">
+                    <img src="<%= blog.coverImageURL %>" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <%= blog.title %>
+                        </h5>
+                        <p class="card-text" style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; text-overflow: ellipsis;">
+                            <%= blog.body %>
+                        </p>
+                        <a href="/blog/<%= blog._id %>" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            <% }); %>
+
+        </div>
+
+
+        <!-- Include the `Scripts.ejs` partial -->
+        <%- include("./partials/scripts.ejs") %>
+</body>
+
+</html>
